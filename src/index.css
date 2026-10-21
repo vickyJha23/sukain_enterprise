@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #1f7a34;
+  --color-brand-dark: #17602a;
+  --color-ink: #0e1511;
+  --color-navy: #13201a;
+  --color-body: #28302b;
+  --color-muted: #616b65;
+  --color-line: #e2e7e3;
+  --color-soft: #f2f5f2;
+  --color-earth: #8a5a2b;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-head: 'Montserrat', system-ui, sans-serif;
+
+  --shadow-card: 0 10px 30px rgb(14 21 17 / 0.08);
+  --shadow-pop: 0 20px 50px rgb(14 21 17 / 0.18);
+}
+
+@layer base {
+  html {
+    /* fallback for browsers without overflow: clip (older iOS Safari) */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+
+  body {
+    @apply overflow-x-clip bg-white font-sans text-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-head text-ink leading-tight;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-6;
+  }
+
+  .eyebrow {
+    @apply mb-2.5 inline-block text-xs font-bold uppercase tracking-[0.22em] text-brand;
+  }
+
+  .h2 {
+    @apply text-[clamp(1.6rem,2.6vw,2.25rem)] font-extrabold;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-md border-2 border-transparent px-6 py-3 text-[0.95rem] font-semibold leading-none transition duration-200 hover:-translate-y-0.5;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2.5 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-7 py-4 text-base;
+  }
+
+  .btn-primary {
+    @apply bg-brand text-white hover:bg-brand-dark;
+  }
+
+  .btn-light {
+    @apply bg-white text-brand;
+  }
+
+  .btn-outline-light {
+    @apply border-white/85 text-white hover:bg-white hover:text-ink;
+  }
+
+  .btn-ghost {
+    @apply border-line text-body;
+  }
+
+  .link-arrow {
+    @apply inline-flex items-center gap-2 text-[0.92rem] font-semibold text-brand [&>svg]:transition-transform hover:[&>svg]:translate-x-1;
+  }
+
+  .input {
+    @apply w-full rounded border border-line bg-white px-3.5 py-3 text-[0.92rem] text-body outline-none transition focus:border-brand focus:ring-3 focus:ring-brand/15;
+  }
+
+  .data-table {
+    @apply w-full min-w-[460px] border-collapse text-[0.92rem];
+  }
+
+  .data-table th {
+    @apply bg-navy px-4.5 py-3.5 text-left font-head font-semibold text-white;
+  }
+
+  .data-table td {
+    @apply border-t border-line px-4.5 py-3.5;
+  }
+
+  .data-table tbody tr:nth-child(even) {
+    @apply bg-soft;
+  }
+
+  .data-table td:first-child {
+    @apply font-semibold text-ink;
+  }
+
+  .data-table td.price {
+    @apply font-semibold text-brand;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
