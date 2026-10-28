@@ -2,26 +2,16 @@ import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { CtaBanner, PageHero, SectionHead } from '../components/Sections'
 import { CheckList } from './About'
-import { IMAGES, products } from '../data/site'
+import { pageHeroes, products, productsPage } from '../data/site'
 
 export default function Products() {
   return (
     <>
-      <PageHero
-        eyebrow="Our Products"
-        title="Mulching Film & Weed Mat"
-        text="Agricultural films designed for better soil health, higher yield and long field life."
-        image={IMAGES.sample20}
-        crumbs={[{ label: 'Our Products' }]}
-      />
+      <PageHero {...pageHeroes.products} />
 
       <section className="py-16 md:py-22.5">
         <div className="container-x">
-          <SectionHead
-            eyebrow="What We Offer"
-            title="The Right Film for Every Field"
-            text="Choose the thickness, weight and roll size that suits your crop, season and field conditions."
-          />
+          <SectionHead eyebrow={productsPage.eyebrow} title={productsPage.title} text={productsPage.text} />
           <div className="grid gap-17.5">
             {products.map((p, i) => (
               <article key={p.slug} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-15">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Icon from '../components/Icon'
 import { CtaBanner, PageHero, SectionHead } from '../components/Sections'
-import { gallery, galleryCategories, IMAGES } from '../data/site'
+import { gallery, galleryCategories, galleryPage, pageHeroes } from '../data/site'
 
 const tag = 'inline-block rounded-sm bg-brand px-2.5 py-1 text-[0.72rem] font-bold tracking-wider text-white uppercase'
 
@@ -21,19 +21,13 @@ export default function Gallery() {
 
   return (
     <>
-      <PageHero
-        eyebrow="Gallery"
-        title="Our Products Up Close"
-        text="Real samples, product photos and brochures from Sunkaine Plastic Industries."
-        image={IMAGES.sample30}
-        crumbs={[{ label: 'Gallery' }]}
-      />
+      <PageHero {...pageHeroes.gallery} />
 
       <section className="py-16 md:py-22.5">
         <div className="container-x">
           <SectionHead
-            eyebrow="Photos"
-            title="See the Quality for Yourself"
+            eyebrow={galleryPage.eyebrow}
+            title={galleryPage.title}
             action={
               <div className="flex flex-wrap gap-2" role="tablist">
                 {galleryCategories.map((c) => (
@@ -66,6 +60,7 @@ export default function Gallery() {
                   <span className={tag}>{g.category}</span>
                   <h3 className="mt-2 mb-1 text-xl font-bold text-white">{g.title}</h3>
                   <p className="text-sm">{g.text}</p>
+                  {g.credit && <p className="mt-1 text-[0.7rem] text-white/60">{g.credit}</p>}
                 </div>
               </button>
             ))}
@@ -95,6 +90,7 @@ export default function Gallery() {
               <span className={tag}>{active.category}</span>
               <h3 className="mt-2.5 mb-1 text-xl font-bold">{active.title}</h3>
               <p className="text-muted">{active.text}</p>
+              {active.credit && <p className="mt-1 text-xs text-muted">{active.credit}</p>}
             </div>
           </div>
         </div>

@@ -1,16 +1,8 @@
 import { useState } from 'react'
 import Icon from '../components/Icon'
-import { CtaBanner, MulchRateTable, PageHero, RateNote, SectionHead, WeedMatRateTable } from '../components/Sections'
+import { CtaBanner, PageHero, SectionHead } from '../components/Sections'
 import { ValueCard } from './About'
-import { care, faqs, IMAGES, process, specs } from '../data/site'
-
-const tabs = [
-  ['rate-list', 'Rate List'],
-  ['specifications', 'Specifications'],
-  ['laying-guide', 'Laying Guide'],
-  ['care', 'Storage & Care'],
-  ['faqs', 'FAQs'],
-]
+import { care, faqs, pageHeroes, process, specs, technical, technicalSections } from '../data/site'
 
 export default function TechnicalInfo() {
   const [openFaq, setOpenFaq] = useState(0)
@@ -18,57 +10,25 @@ export default function TechnicalInfo() {
 
   return (
     <>
-      <PageHero
-        eyebrow="Technical Info"
-        title="Rate List, Specifications & Guide"
-        text="Everything you need to choose, lay and look after the right film for your field."
-        image={IMAGES.filmTexture}
-        crumbs={[{ label: 'Technical Info' }]}
-      />
+      <PageHero {...pageHeroes.technical} />
 
       <div className="sticky top-18 z-10 border-b border-line bg-white lg:top-21">
         <div className="container-x flex gap-2 overflow-x-auto">
-          {tabs.map(([id, label]) => (
+          {technicalSections.map((s) => (
             <a
-              key={id}
-              href={`#${id}`}
+              key={s.id}
+              href={`#${s.id}`}
               className="border-b-3 border-transparent px-4.5 py-4 text-sm font-semibold whitespace-nowrap hover:border-brand hover:text-brand"
             >
-              {label}
+              {s.label}
             </a>
           ))}
         </div>
       </div>
 
-      <section className="scroll-mt-36 py-16 md:py-22.5" id="rate-list">
+      <section className="scroll-mt-36 py-16 md:py-22.5" id="specifications">
         <div className="container-x">
-          <SectionHead
-            eyebrow="Rate List"
-            title="Mulching Film & Weed Mat Prices"
-            text="Standard price per roll. Dealers and bulk buyers can ask for special pricing."
-            action={
-              <a href={IMAGES.rateList} download="sunkaine-rate-list.jpg" className="btn btn-primary btn-sm">
-                <Icon name="file" size={16} /> Download Rate List
-              </a>
-            }
-          />
-          <div className="grid items-start gap-8 lg:grid-cols-2">
-            <div className="min-w-0">
-              <h3 className="mb-4 text-xl font-bold">Mulching Film <small className="text-sm font-medium text-muted">Silver / Black</small></h3>
-              <MulchRateTable />
-            </div>
-            <div className="min-w-0">
-              <h3 className="mb-4 text-xl font-bold">Weed Mat <small className="text-sm font-medium text-muted">UV Stabilised</small></h3>
-              <WeedMatRateTable />
-            </div>
-          </div>
-          <RateNote />
-        </div>
-      </section>
-
-      <section className="scroll-mt-36 bg-soft py-16 md:py-22.5" id="specifications">
-        <div className="container-x">
-          <SectionHead eyebrow="Product Specifications" title="Compare Our Products" />
+          <SectionHead eyebrow={technical.specifications.eyebrow} title={technical.specifications.title} />
           <div className="overflow-x-auto rounded-md border border-line bg-white">
             <table className="data-table">
               <thead>
@@ -84,9 +44,9 @@ export default function TechnicalInfo() {
         </div>
       </section>
 
-      <section className="scroll-mt-36 py-16 md:py-22.5" id="laying-guide">
+      <section className="scroll-mt-36 bg-soft py-16 md:py-22.5" id="laying-guide">
         <div className="container-x">
-          <SectionHead eyebrow="Laying Guide" title="How to Lay Mulching Film" />
+          <SectionHead eyebrow={technical.layingGuide.eyebrow} title={technical.layingGuide.title} />
           <div className="grid gap-5.5">
             {process.map((p, i) => (
               <article key={p.title} className="grid items-center gap-6 rounded-md bg-white p-5 shadow-card md:grid-cols-[120px_1fr]">
@@ -108,9 +68,9 @@ export default function TechnicalInfo() {
         </div>
       </section>
 
-      <section className="scroll-mt-36 bg-soft py-16 md:py-22.5" id="care">
+      <section className="scroll-mt-36 py-16 md:py-22.5" id="care">
         <div className="container-x">
-          <SectionHead eyebrow="Storage & Care" title="Get the Most From Every Roll" />
+          <SectionHead eyebrow={technical.care.eyebrow} title={technical.care.title} />
           <div className="grid gap-5.5 sm:grid-cols-2 lg:grid-cols-4">
             {care.map((c) => (
               <ValueCard key={c.title} icon="shield" {...c} />
@@ -119,9 +79,9 @@ export default function TechnicalInfo() {
         </div>
       </section>
 
-      <section className="scroll-mt-36 py-16 md:py-22.5" id="faqs">
+      <section className="scroll-mt-36 bg-soft py-16 md:py-22.5" id="faqs">
         <div className="container-x max-w-225">
-          <SectionHead eyebrow="FAQs" title="Frequently Asked Questions" text="Can't find your answer? Call or WhatsApp us and we'll help." />
+          <SectionHead eyebrow={technical.faqs.eyebrow} title={technical.faqs.title} text={technical.faqs.text} />
           <div className="grid gap-3">
             {faqs.map((f, i) => {
               const isOpen = openFaq === i

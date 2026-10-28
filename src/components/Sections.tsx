@@ -1,7 +1,28 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
-import { company, crops, IMAGES, mulchLengths, mulchRates, process, products, requirements, rupee, weedMatRates } from '../data/site'
+import {
+  company,
+  cropCoverGsm,
+  cropCoverRate,
+  cropCoverNote,
+  cropCoverRows,
+  crops,
+  ctaBanner,
+  mulchLengths,
+  mulchRates,
+  process,
+  products,
+  quoteForm,
+  quoteLink,
+  quoteSection,
+  rateNote,
+  requirements,
+  rupee,
+  rupee2,
+  weedMatRates,
+  type Hero,
+} from '../data/site'
 
 export function SectionHead({
   eyebrow,
@@ -33,11 +54,10 @@ export function PageHero({
   title,
   text,
   image,
-  crumbs = [],
-}: {
-  eyebrow?: string
+  crumb,
+  crumbs = crumb ? [{ label: crumb }] : [],
+}: Partial<Hero> & {
   title: ReactNode
-  text?: ReactNode
   image: string
   crumbs?: { label: string; to?: string }[]
 }) {
@@ -66,13 +86,13 @@ export function PageHero({
 
 export function ProductCards() {
   return (
-    <div className="grid gap-5.5 md:grid-cols-2">
+    <div className="grid gap-5.5 md:grid-cols-2 lg:grid-cols-3">
       {products.map((p) => (
         <article
           key={p.slug}
           className="overflow-hidden rounded-md bg-white transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.35)]"
         >
-          <div className="relative h-60 sm:h-72">
+          <div className="relative h-60">
             <img src={p.image} alt={p.title} loading="lazy" className="size-full object-cover" />
             <span className="absolute -bottom-5.5 left-4.5 grid size-11.5 place-items-center rounded-full bg-white text-brand shadow-card">
               <Icon name={p.icon} size={22} />
@@ -176,12 +196,65 @@ export function WeedMatRateTable() {
   )
 }
 
+export function CropCoverRateTable({ gsm }: { gsm: number }) {
+  return (
+    <div className="overflow-x-auto rounded-md border border-line">
+      <table className="data-table">
+        <thead>
+          <tr><th>Length (m)</th><th>Width (ft)</th><th>Weight (kg)</th><th>Rate (₹/kg)</th><th>Total (₹)</th></tr>
+        </thead>
+        <tbody>
+          {cropCoverRows(gsm).map((r) => (
+            <tr key={`${r.width}-${r.length}`}>
+              <td>{r.length}</td>
+              <td>{r.width}</td>
+              <td>{r.weight.toFixed(2)}</td>
+              <td>{cropCoverRate.toFixed(2)}</td>
+              <td className="price">{rupee2(r.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+export function CropCoverRates() {
+  const [gsm, setGsm] = useState(cropCoverGsm[0])
+  return (
+    <div>
+      <div className="mb-4 flex flex-wrap items-center gap-2" role="tablist" aria-label="Crop cover GSM">
+        {cropCoverGsm.map((g) => (
+          <button
+            key={g}
+            type="button"
+            role="tab"
+            aria-selected={gsm === g}
+            onClick={() => setGsm(g)}
+            className={`rounded-full border px-4.5 py-2 text-sm font-semibold transition hover:border-brand hover:bg-brand hover:text-white ${
+              gsm === g ? 'border-brand bg-brand text-white' : 'border-line bg-white text-body'
+            }`}
+          >
+            {g} GSM
+          </button>
+        ))}
+        <span className="ml-auto rounded-md bg-[#ffe14d] px-3.5 py-2 text-sm font-bold text-ink">Rate: ₹{cropCoverRate} per kg</span>
+      </div>
+      <CropCoverRateTable gsm={gsm} />
+      <p className="mt-3 text-sm text-muted">{cropCoverNote}</p>
+    </div>
+  )
+}
+
+export function ProductRates({ slug }: { slug: string }) {
+  if (slug === 'weed-mat') return <WeedMatRateTable />
+  if (slug === 'uv-crop-cover') return <CropCoverRates />
+  return <MulchRateTable />
+}
+
 export function RateNote() {
   return (
-    <p className="mt-4 text-sm text-muted">
-      Prices are per roll and may change with raw material costs. Call {company.phone} to confirm current rates, bulk
-      discounts and delivery.
-    </p>
+    <p className="mt-4 text-sm text-muted">{rateNote}</p>
   )
 }
 
@@ -190,12 +263,12 @@ export function CtaBanner() {
     <section className="bg-brand py-14 text-[#e3f3e6]">
       <div className="container-x flex flex-wrap items-center justify-between gap-7">
         <div>
-          <h2 className="h2 mb-1.5 text-white">Planning your next crop season?</h2>
-          <p>Talk to us for the right film thickness, sizes and the best price on your order.</p>
+          <h2 className="h2 mb-1.5 text-white">{ctaBanner.title}</h2>
+          <p>{ctaBanner.text}</p>
         </div>
         <div className="flex flex-wrap gap-3.5">
-          <Link to="/contact#quote" className="btn btn-light">
-            Get a Free Quote <Icon name="arrow" size={16} />
+          <Link to={quoteLink.to} className="btn btn-light">
+            {ctaBanner.button} <Icon name="arrow" size={16} />
           </Link>
           <a href={company.phoneHref} className="btn btn-outline-light">
             <Icon name="phone" size={16} /> {company.phone}
@@ -220,10 +293,10 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
   const submit = (e: FormEvent) => {
     e.preventDefault()
     const errs: Partial<Record<keyof FormState, string>> = {}
-    if (!form.name.trim()) errs.name = 'Please enter your name'
-    if (!/^[+\d][\d\s-]{7,}$/.test(form.phone.trim())) errs.phone = 'Please enter a valid phone number'
-    if (!form.location.trim()) errs.location = 'Please enter your location'
-    if (!form.requirement) errs.requirement = 'Please select a requirement'
+    if (!form.name.trim()) errs.name = quoteForm.errors.name
+    if (!/^[+\d][\d\s-]{7,}$/.test(form.phone.trim())) errs.phone = quoteForm.errors.phone
+    if (!form.location.trim()) errs.location = quoteForm.errors.location
+    if (!form.requirement) errs.requirement = quoteForm.errors.requirement
     setErrors(errs)
     if (Object.keys(errs).length) return
     setSent(form)
@@ -232,20 +305,20 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
 
   if (sent) {
     const msg = encodeURIComponent(
-      `Hello Sunkaine Plastic Industries, I'm ${sent.name}${sent.company ? ` from ${sent.company}` : ''} (${sent.location}). ` +
+      `${quoteForm.greeting}, I'm ${sent.name}${sent.company ? ` from ${sent.company}` : ''} (${sent.location}). ` +
         `Requirement: ${sent.requirement}. ${sent.message} Phone: ${sent.phone}`,
     )
     return (
       <div className="rounded-md bg-white px-6 py-9 text-center text-body">
         <Icon name="checkCircle" size={44} className="mx-auto mb-3 text-brand" />
         <h3 className="mb-2 text-xl font-bold">Thank you, {sent.name}!</h3>
-        <p className="mb-5">Send your enquiry on WhatsApp and our team will reply with prices and availability.</p>
+        <p className="mb-5">{quoteForm.thanks}</p>
         <div className="flex flex-wrap justify-center gap-3">
           <a href={`${company.whatsapp}?text=${msg}`} target="_blank" rel="noreferrer" className="btn btn-primary">
-            <Icon name="whatsapp" size={16} /> Send on WhatsApp
+            <Icon name="whatsapp" size={16} /> {quoteForm.whatsappButton}
           </a>
           <button type="button" className="btn btn-ghost" onClick={() => setSent(null)}>
-            Send another enquiry
+            {quoteForm.again}
           </button>
         </div>
       </div>
@@ -256,24 +329,25 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
   const err = (k: keyof FormState) => (errors[k] ? 'border-red-400' : '')
   const msg = (k: keyof FormState) => errors[k] && <small className="mt-1 text-xs text-red-400">{errors[k]}</small>
 
-  const field = (k: keyof FormState, placeholder: string, type = 'text') => (
+  const ph = quoteForm.placeholders
+  const field = (k: keyof FormState, type = 'text') => (
     <label className="flex flex-col">
-      <span className="sr-only">{placeholder}</span>
-      <input type={type} placeholder={placeholder} value={form[k]} onChange={set(k)} className={`input ${pad} ${err(k)}`} />
+      <span className="sr-only">{ph[k]}</span>
+      <input type={type} placeholder={ph[k]} value={form[k]} onChange={set(k)} className={`input ${pad} ${err(k)}`} />
       {msg(k)}
     </label>
   )
 
   return (
     <form className="grid gap-3.5 sm:grid-cols-2" onSubmit={submit} noValidate>
-      {field('name', 'Your Name*')}
-      {field('company', 'Farm / Shop Name')}
-      {field('phone', 'Phone Number*', 'tel')}
-      {field('location', 'Village / City*')}
+      {field('name')}
+      {field('company')}
+      {field('phone', 'tel')}
+      {field('location')}
       <label className="flex flex-col sm:col-span-2">
-        <span className="sr-only">Select Requirement</span>
+        <span className="sr-only">{ph.requirement}</span>
         <select value={form.requirement} onChange={set('requirement')} className={`input ${pad} ${err('requirement')}`}>
-          <option value="">Select Requirement*</option>
+          <option value="">{ph.requirement}</option>
           {requirements.map((r) => (
             <option key={r}>{r}</option>
           ))}
@@ -281,10 +355,10 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
         {msg('requirement')}
       </label>
       <label className="flex flex-col sm:col-span-2">
-        <span className="sr-only">Your Message</span>
+        <span className="sr-only">{ph.message}</span>
         <textarea
           rows={compact ? 3 : 5}
-          placeholder="Quantity, micron / GSM, roll length (optional)"
+          placeholder={ph.message}
           value={form.message}
           onChange={set('message')}
           className={`input resize-y ${pad}`}
@@ -292,7 +366,7 @@ export function QuoteForm({ compact = false }: { compact?: boolean }) {
       </label>
       <div className="sm:col-span-2">
         <button type="submit" className="btn btn-primary">
-          Send Enquiry <Icon name="arrow" size={16} />
+          {quoteForm.submit} <Icon name="arrow" size={16} />
         </button>
       </div>
     </form>
@@ -304,12 +378,12 @@ export function QuoteSection() {
     <section
       id="quote"
       className="relative bg-cover bg-center py-20 text-[#d5ddd7] before:absolute before:inset-0 before:bg-linear-to-r before:from-[#0b120e]/97 before:via-[#0b120e]/90 before:to-[#0b120e]/60"
-      style={{ backgroundImage: `url(${IMAGES.filmTexture})` }}
+      style={{ backgroundImage: `url(${quoteSection.image})` }}
     >
       <div className="container-x relative grid items-center gap-10 lg:grid-cols-[1fr_1.5fr] xl:grid-cols-[1fr_1.4fr_0.8fr]">
         <div>
-          <h2 className="mb-3 text-[clamp(1.8rem,3vw,2.5rem)] font-extrabold text-white">Get a Free Quote</h2>
-          <p>Tell us what you need and our team will get back to you with prices and availability.</p>
+          <h2 className="mb-3 text-[clamp(1.8rem,3vw,2.5rem)] font-extrabold text-white">{quoteSection.title}</h2>
+          <p>{quoteSection.text}</p>
           <ul className="mt-6 grid gap-3.5 text-white">
             <li className="flex items-center gap-3.5"><Icon name="phone" size={20} /><a href={company.phoneHref} className="hover:text-[#7fcf8f]">{company.phone}</a></li>
             <li className="flex items-center gap-3.5 break-all"><Icon name="mail" size={20} className="shrink-0" /><a href={`mailto:${company.email}`} className="hover:text-[#7fcf8f]">{company.email}</a></li>
@@ -318,10 +392,9 @@ export function QuoteSection() {
         </div>
         <QuoteForm compact />
         <ul className="grid grid-cols-2 gap-4.5 rounded-md border border-white/12 bg-[#08100b]/85 p-6 text-[0.9rem] text-white sm:grid-cols-4 lg:col-span-2 xl:col-span-1 xl:grid-cols-1">
-          <li className="flex items-center gap-3"><Icon name="rupee" size={18} /> Factory Prices</li>
-          <li className="flex items-center gap-3"><Icon name="ruler" size={18} /> All Sizes</li>
-          <li className="flex items-center gap-3"><Icon name="badge" size={18} /> Quality Material</li>
-          <li className="flex items-center gap-3"><Icon name="truck" size={18} /> Timely Supply</li>
+          {quoteSection.perks.map((p) => (
+            <li key={p.label} className="flex items-center gap-3"><Icon name={p.icon} size={18} /> {p.label}</li>
+          ))}
         </ul>
       </div>
     </section>

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Icon from '../components/Icon'
-import { MulchRateTable, PageHero, ProcessSteps, QuoteSection, RateNote, SectionHead, WeedMatRateTable } from '../components/Sections'
-import { company, IMAGES, products } from '../data/site'
+import { PageHero, ProcessSteps, ProductRates, QuoteSection, RateNote, SectionHead } from '../components/Sections'
+import { company, productDetail, productHero, products } from '../data/site'
 import NotFound from './NotFound'
 
 function SideLink({ to, active = false, children }: { to: string; active?: boolean; children: ReactNode }) {
@@ -27,15 +27,16 @@ export default function ProductDetail() {
   const { slug } = useParams()
   const p = products.find((x) => x.slug === slug)
   if (!p) return <NotFound />
+  const { headings, sidebar, help, priceCard } = productDetail
 
   return (
     <>
       <PageHero
-        eyebrow="Our Products"
+        eyebrow={productHero.eyebrow}
         title={p.title}
         text={p.short}
-        image={IMAGES.filmTexture}
-        crumbs={[{ label: 'Our Products', to: '/products' }, { label: p.title }]}
+        image={productHero.image}
+        crumbs={[{ label: productHero.eyebrow, to: '/products' }, { label: p.title }]}
       />
 
       <section className="py-16 md:py-22.5">
@@ -45,7 +46,7 @@ export default function ProductDetail() {
             <h2 className="h2 mb-4">About {p.title}</h2>
             <p className="text-muted">{p.intro}</p>
 
-            <h3 className="mt-9 mb-4 text-xl font-bold">Key Benefits</h3>
+            <h3 className="mt-9 mb-4 text-xl font-bold">{headings.benefits}</h3>
             <ul className="grid gap-3.5 sm:grid-cols-2">
               {p.benefits.map((b) => (
                 <li key={b} className="flex gap-2.5 rounded-md bg-soft p-4 text-[0.92rem]">
@@ -54,7 +55,7 @@ export default function ProductDetail() {
               ))}
             </ul>
 
-            <h3 className="mt-9 mb-4 text-xl font-bold">Ideal For</h3>
+            <h3 className="mt-9 mb-4 text-xl font-bold">{headings.idealFor}</h3>
             <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-3">
               {p.idealFor.map((f) => (
                 <li key={f.label} className="flex items-center gap-3 rounded-md border border-line p-4 font-semibold text-ink">
@@ -66,7 +67,7 @@ export default function ProductDetail() {
               ))}
             </ul>
 
-            <h3 className="mt-9 mb-4 text-xl font-bold">Specifications</h3>
+            <h3 className="mt-9 mb-4 text-xl font-bold">{headings.specs}</h3>
             <div className="overflow-x-auto rounded-md border border-line">
               <table className="data-table">
                 <thead>
@@ -80,14 +81,14 @@ export default function ProductDetail() {
               </table>
             </div>
 
-            <h3 className="mt-9 mb-4 text-xl font-bold">Price List</h3>
-            {p.slug === 'weed-mat' ? <WeedMatRateTable /> : <MulchRateTable />}
+            <h3 className="mt-9 mb-4 text-xl font-bold">{headings.prices}</h3>
+            <ProductRates slug={p.slug} />
             <RateNote />
           </div>
 
           <aside className="grid min-w-0 gap-6 lg:sticky lg:top-27">
             <div className="rounded-md border border-line p-6.5">
-              <h4 className={`${sideTitle} border-brand`}>All Products</h4>
+              <h4 className={`${sideTitle} border-brand`}>{sidebar.allProducts}</h4>
               <ul>
                 {products.map((x) => (
                   <SideLink key={x.slug} to={`/products/${x.slug}`} active={x.slug === p.slug}>
@@ -97,17 +98,15 @@ export default function ProductDetail() {
               </ul>
             </div>
             <div className="rounded-md border border-line p-6.5">
-              <h4 className={`${sideTitle} border-brand`}>Rate List Brochure</h4>
-              <a href={IMAGES.rateList} target="_blank" rel="noreferrer" className="mt-3 block overflow-hidden rounded border border-line">
-                <img src={IMAGES.rateList} alt="Sunkaine mulching film and weed mat rate list" loading="lazy" className="w-full transition-transform duration-300 hover:scale-105" />
-              </a>
-              <a href={IMAGES.rateList} download="sunkaine-rate-list.jpg" className="btn btn-primary btn-sm mt-4 w-full">
-                <Icon name="file" size={16} /> Download Rate List
-              </a>
+              <h4 className={`${sideTitle} border-brand`}>{priceCard.title}</h4>
+              <p className="my-3 text-[0.92rem] text-muted">{priceCard.text}</p>
+              <Link to={`/price-list#${p.slug}`} className="btn btn-primary btn-sm w-full">
+                <Icon name="rupee" size={16} /> {priceCard.button}
+              </Link>
             </div>
             <div className="rounded-md bg-brand p-6.5 text-[#e3f3e6]">
-              <h4 className={`${sideTitle} border-white text-white`}>Need Help Choosing?</h4>
-              <p className="my-3">Tell us your crop and field, and we'll suggest the right size.</p>
+              <h4 className={`${sideTitle} border-white text-white`}>{help.title}</h4>
+              <p className="my-3">{help.text}</p>
               <a href={company.phoneHref} className="mb-4 flex items-center gap-2.5 font-head text-xl font-bold text-white">
                 <Icon name="phone" size={18} /> {company.phone}
               </a>
@@ -116,15 +115,11 @@ export default function ProductDetail() {
               </a>
             </div>
             <div className="rounded-md border border-line p-6.5">
-              <h4 className={`${sideTitle} border-brand`}>Technical Resources</h4>
+              <h4 className={`${sideTitle} border-brand`}>{sidebar.resources}</h4>
               <ul>
-                {[
-                  ['specifications', 'Specifications'],
-                  ['laying-guide', 'Laying Guide'],
-                  ['faqs', 'FAQs'],
-                ].map(([id, label]) => (
-                  <SideLink key={id} to={`/technical-info#${id}`}>
-                    <span className="inline-flex items-center gap-2"><Icon name="file" size={16} /> {label}</span>
+                {productDetail.resources.map((r) => (
+                  <SideLink key={r.id} to={`/technical-info#${r.id}`}>
+                    <span className="inline-flex items-center gap-2"><Icon name="file" size={16} /> {r.label}</span>
                   </SideLink>
                 ))}
               </ul>
@@ -135,7 +130,7 @@ export default function ProductDetail() {
 
       <section className="bg-soft py-16 md:py-22.5">
         <div className="container-x">
-          <SectionHead eyebrow="How to Use" title="Laying Guide" />
+          <SectionHead eyebrow={productDetail.process.eyebrow} title={productDetail.process.title} />
           <ProcessSteps />
         </div>
       </section>

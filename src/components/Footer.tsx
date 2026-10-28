@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
 import Logo from './Logo'
-import { company, crops, products } from '../data/site'
+import { company, footer, type PageLink } from '../data/site'
 
 function Col({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -16,6 +16,11 @@ function Col({ title, children }: { title: string; children: ReactNode }) {
 const year = new Date().getFullYear()
 const linkCls = 'hover:text-white'
 
+const links = (items: PageLink[]) =>
+  items.map((l) => (
+    <li key={l.to}><Link className={linkCls} to={l.to}>{l.label}</Link></li>
+  ))
+
 export default function Footer() {
   return (
     <footer className="bg-ink pt-[70px] text-[0.92rem] text-[#a7b0aa]">
@@ -24,50 +29,39 @@ export default function Footer() {
           <div className="mb-5 inline-block rounded-md bg-white px-4 py-2.5">
             <Logo />
           </div>
-          <p className="mb-4">
-            Agricultural mulching film and UV stabilised weed mat, made in Bawal, Haryana. Quality today, green
-            tomorrow.
-          </p>
+          <p className="mb-4">{footer.about}</p>
           <div className="flex flex-wrap gap-3">
             <a href={company.whatsapp} target="_blank" rel="noreferrer" className="btn btn-outline-light btn-sm">
-              <Icon name="whatsapp" size={16} /> Chat on WhatsApp
+              <Icon name="whatsapp" size={16} /> {footer.whatsappButton}
+            </a>
+            <a
+              href={company.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Follow us on Instagram"
+              className="btn btn-outline-light btn-sm"
+            >
+              <Icon name="instagram" size={16} /> {footer.instagramButton}
             </a>
           </div>
         </div>
 
-        <Col title="Quick Links">
-          <li><Link className={linkCls} to="/about">About Us</Link></li>
-          <li><Link className={linkCls} to="/gallery">Gallery</Link></li>
-          <li><Link className={linkCls} to="/technical-info#rate-list">Rate List</Link></li>
-          <li><Link className={linkCls} to="/technical-info#faqs">FAQs</Link></li>
-          <li><Link className={linkCls} to="/contact">Contact</Link></li>
-        </Col>
+        <Col title={footer.headings.quickLinks}>{links(footer.quickLinks)}</Col>
+        <Col title={footer.headings.products}>{links(footer.productLinks)}</Col>
+        <Col title={footer.headings.crops}>{links(footer.cropLinks)}</Col>
 
-        <Col title="Our Products">
-          {products.map((p) => (
-            <li key={p.slug}><Link className={linkCls} to={`/products/${p.slug}`}>{p.title}</Link></li>
-          ))}
-          <li><Link className={linkCls} to="/technical-info#specifications">Specifications</Link></li>
-          <li><Link className={linkCls} to="/technical-info#laying-guide">Laying Guide</Link></li>
-        </Col>
-
-        <Col title="Crops">
-          {crops.slice(0, 5).map((c) => (
-            <li key={c.slug}><Link className={linkCls} to={`/crops#${c.slug}`}>{c.title}</Link></li>
-          ))}
-        </Col>
-
-        <Col title="Contact">
+        <Col title={footer.headings.contact}>
           <li className="flex gap-2.5"><Icon name="phone" size={16} className="mt-1 shrink-0 text-[#7fcf8f]" /><a className={linkCls} href={company.phoneHref}>{company.phone}</a></li>
           <li className="flex gap-2.5 break-all"><Icon name="mail" size={16} className="mt-1 shrink-0 text-[#7fcf8f]" /><a className={linkCls} href={`mailto:${company.email}`}>{company.email}</a></li>
           <li className="flex gap-2.5"><Icon name="pin" size={16} className="mt-1 shrink-0 text-[#7fcf8f]" /><span>{company.address}</span></li>
           <li className="flex gap-2.5"><Icon name="file" size={16} className="mt-1 shrink-0 text-[#7fcf8f]" /><span>GSTIN: {company.gstin}</span></li>
+          <li className="flex gap-2.5"><Icon name="instagram" size={16} className="mt-1 shrink-0 text-[#7fcf8f]" /><a className={linkCls} href={company.instagram} target="_blank" rel="noreferrer">{company.instagramHandle}</a></li>
         </Col>
       </div>
       <div className="border-t border-white/10 py-5 text-sm">
         <div className="container-x flex flex-wrap justify-between gap-2.5">
           <span>© {year} {company.name}. All rights reserved.</span>
-          <span>Quality Today, Green Tomorrow · Made in India</span>
+          <span>{footer.bottomLine}</span>
         </div>
       </div>
     </footer>

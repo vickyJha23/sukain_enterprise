@@ -1,18 +1,12 @@
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { CropTiles, CtaBanner, PageHero, SectionHead } from '../components/Sections'
-import { crops, IMAGES } from '../data/site'
+import { crops, cropsPage, pageHeroes, quoteLink } from '../data/site'
 
 export default function Crops() {
   return (
     <>
-      <PageHero
-        eyebrow="Crops We Serve"
-        title="Made for Indian Farms"
-        text="Mulching film and weed mat help a wide range of crops grow cleaner, healthier and stronger."
-        image={IMAGES.sample25}
-        crumbs={[{ label: 'Crops' }]}
-      />
+      <PageHero {...pageHeroes.crops} />
 
       <section className="py-16 md:py-22.5">
         <div className="container-x">
@@ -22,11 +16,7 @@ export default function Crops() {
 
       <section className="bg-soft py-16 md:py-22.5">
         <div className="container-x">
-          <SectionHead
-            eyebrow="Crop Benefits"
-            title="Better Results in Every Field"
-            text="Every crop has its own needs for water, temperature and weed control. Here's how our products help each one."
-          />
+          <SectionHead eyebrow={cropsPage.eyebrow} title={cropsPage.title} text={cropsPage.text} />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {crops.map((c) => (
               <article
@@ -39,8 +29,8 @@ export default function Crops() {
                 </span>
                 <h3 className="mb-2 text-xl font-bold">{c.title}</h3>
                 <p className="mb-4 text-[0.9rem] text-muted">{c.text}</p>
-                <Link to="/contact#quote" className="link-arrow">
-                  Get a Quote <Icon name="arrow" size={14} />
+                <Link to={quoteLink.to} className="link-arrow">
+                  {cropsPage.link} <Icon name="arrow" size={14} />
                 </Link>
               </article>
             ))}

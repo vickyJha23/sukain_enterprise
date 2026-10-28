@@ -3,17 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import Icon from './Icon'
-import { company, products } from '../data/site'
-
-const titles: Record<string, string> = {
-  '/': 'Mulching Film & Weed Mat Manufacturer, Haryana',
-  '/about': 'About Us',
-  '/products': 'Our Products',
-  '/crops': 'Crops We Serve',
-  '/gallery': 'Gallery',
-  '/technical-info': 'Rate List & Technical Info',
-  '/contact': 'Contact Us',
-}
+import { company, pageTitles as titles, products } from '../data/site'
 
 function pageTitle(pathname: string) {
   const slug = pathname.match(/^\/products\/([^/]+)/)?.[1]

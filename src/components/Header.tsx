@@ -2,37 +2,7 @@ import { useEffect, useState, type FormEvent, type MouseEvent } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Icon from './Icon'
 import Logo from './Logo'
-import { company, crops, products } from '../data/site'
-
-type NavItem = { to: string; label: string; children?: { to: string; label: string }[] }
-
-const nav: NavItem[] = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About Us' },
-  {
-    to: '/products',
-    label: 'Our Products',
-    children: products.map((p) => ({ to: `/products/${p.slug}`, label: p.title })),
-  },
-  {
-    to: '/crops',
-    label: 'Crops',
-    children: crops.map((c) => ({ to: `/crops#${c.slug}`, label: c.title })),
-  },
-  { to: '/gallery', label: 'Gallery' },
-  {
-    to: '/technical-info',
-    label: 'Technical Info',
-    children: [
-      { to: '/technical-info#rate-list', label: 'Rate List' },
-      { to: '/technical-info#specifications', label: 'Product Specifications' },
-      { to: '/technical-info#laying-guide', label: 'Laying Guide' },
-      { to: '/technical-info#care', label: 'Storage & Care' },
-      { to: '/technical-info#faqs', label: 'FAQs' },
-    ],
-  },
-  { to: '/contact', label: 'Contact' },
-]
+import { company, crops, navigation as nav, products, quoteLink, searchPlaceholder } from '../data/site'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
@@ -88,10 +58,11 @@ export default function Header() {
     const product = products.find((p) => p.title.toLowerCase().includes(q) || p.slug.includes(q))
     if (product) return navigate(`/products/${product.slug}`)
     if (/mulch|micron|film|silver/.test(q)) return navigate('/products/mulching-film')
+    if (/cover|frost|tunnel|non.?woven/.test(q)) return navigate('/products/uv-crop-cover')
     if (/weed|mat|gsm/.test(q)) return navigate('/products/weed-mat')
     const crop = crops.find((c) => c.title.toLowerCase().includes(q))
     if (crop) return navigate(`/crops#${crop.slug}`)
-    if (/price|rate|cost/.test(q)) return navigate('/technical-info#rate-list')
+    if (/price|rate|cost/.test(q)) return navigate('/price-list')
     if (/photo|gallery|sample/.test(q)) return navigate('/gallery')
     if (/faq|spec|technical|lay|install|care/.test(q)) return navigate('/technical-info')
     navigate('/contact')
@@ -111,11 +82,20 @@ export default function Header() {
           </div>
           <div className="flex items-stretch gap-7 self-stretch">
             <span className="hidden items-center xl:inline-flex">GSTIN: {company.gstin}</span>
+            <a
+              href={company.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+              className="inline-flex items-center hover:text-white"
+            >
+              <Icon name="instagram" size={15} />
+            </a>
             <a href={company.phoneHref} className="hidden items-center gap-2 hover:text-white sm:inline-flex">
               <Icon name="phone" size={14} className="text-[#7fcf8f]" /> {company.phone}
             </a>
-            <Link to="/contact#quote" className="inline-flex items-center gap-2 bg-brand px-5 font-semibold text-white">
-              Get a Quote <Icon name="arrow" size={14} />
+            <Link to={quoteLink.to} className="inline-flex items-center gap-2 bg-brand px-5 font-semibold text-white">
+              {quoteLink.label} <Icon name="arrow" size={14} />
             </Link>
           </div>
         </div>
@@ -181,8 +161,8 @@ export default function Header() {
                 </li>
               ))}
             </ul>
-            <Link to="/contact#quote" className="btn btn-primary mt-6 flex lg:hidden">
-              Get a Free Quote <Icon name="arrow" size={16} />
+            <Link to={quoteLink.to} className="btn btn-primary mt-6 flex lg:hidden">
+              {quoteLink.mobileLabel} <Icon name="arrow" size={16} />
             </Link>
           </nav>
 
@@ -214,7 +194,7 @@ export default function Header() {
               <input
                 autoFocus
                 type="search"
-                placeholder="Search products, crops, prices, FAQs…"
+                placeholder={searchPlaceholder}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="min-w-0 flex-1 py-2 text-base text-body outline-none"

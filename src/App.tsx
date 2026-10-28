@@ -6,6 +6,7 @@ import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
 import Crops from './pages/Crops'
 import Gallery from './pages/Gallery'
+import PriceList from './pages/PriceList'
 import TechnicalInfo from './pages/TechnicalInfo'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="products/:slug" element={<ProductDetail />} />
           <Route path="crops" element={<Crops />} />
+          <Route path="price-list" element={<PriceList />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="technical-info" element={<TechnicalInfo />} />
           <Route path="contact" element={<Contact />} />
